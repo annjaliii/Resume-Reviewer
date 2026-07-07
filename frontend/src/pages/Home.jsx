@@ -1,16 +1,22 @@
 import Hero from "../components/home/Hero";
 import UploadBox from "../components/home/UploadBox";
-import Footer from "../components/layout/Footer";
+
 import FeatureCards from "../components/home/FeatureCards";
 import HowItWorks from "../components/home/HowItWorks";
+import CTA from "../components/home/CTA";
+import Footer from "../components/layout/Footer";
+
 const Home = () => {
   return (
     <main>
       <Hero />
       <UploadBox />
-      <Footer />
+    
       <FeatureCards />
         <HowItWorks />
+        <CTA />
+          <Footer />
+       
     </main>
   );
 };
