@@ -6,7 +6,6 @@ import HowItWorks from "../components/home/HowItWorks";
 import Testimonials from "../components/home/Testimonials";
 
 import CTA from "../components/home/CTA";
-import Footer from "../components/layout/Footer";
 
 const Home = () => {
   return (
@@ -19,7 +18,7 @@ const Home = () => {
       <Testimonials />
 
       <CTA />
-      <Footer />
+      
     </main>
   );
 };
