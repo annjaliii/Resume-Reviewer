@@ -3,10 +3,11 @@ import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { FileText, Menu, X } from "lucide-react";
 
+const MotionLink = motion(Link);
+
 const NAV_LINKS = [
   { label: "Home", to: "/" },
   { label: "About", to: "/about" },
-  { label: "Contact", to: "/contact" },
 ];
 
 const Navbar = () => {
@@ -21,7 +22,11 @@ const Navbar = () => {
     >
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2" onClick={() => setIsOpen(false)}>
+        <Link
+          to="/"
+          className="flex items-center gap-2"
+          onClick={() => setIsOpen(false)}
+        >
           <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-red-600 shadow-sm shadow-red-200">
             <FileText className="h-5 w-5 text-white" strokeWidth={2.25} />
           </span>
@@ -31,26 +36,30 @@ const Navbar = () => {
         </Link>
 
         {/* Desktop links */}
-        <div className="hidden items-center gap-8 md:flex">
+        <div className="hidden items-center gap-10 md:flex">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.to}
               to={link.to}
-              className="text-sm font-medium text-gray-700 transition-colors duration-200 hover:text-red-600"
+              className="group relative py-1 text-sm font-medium text-gray-700 transition-colors duration-200 hover:text-red-600"
             >
               {link.label}
+              <span className="absolute inset-x-0 -bottom-0.5 h-0.5 origin-left scale-x-0 rounded-full bg-red-600 transition-transform duration-300 ease-out group-hover:scale-x-100" />
             </Link>
           ))}
         </div>
 
         {/* Desktop CTA */}
         <div className="hidden md:block">
-          <Link
-            to="/get-started"
-            className="rounded-full bg-red-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-red-200 transition-all duration-200 hover:bg-red-700 hover:shadow-md hover:shadow-red-200"
+          <MotionLink
+            to="/review-resume"
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.97 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="inline-block rounded-full bg-red-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-red-200 transition-shadow duration-200 hover:bg-red-700 hover:shadow-md hover:shadow-red-200"
           >
-            Get Started
-          </Link>
+            Review Resume
+          </MotionLink>
         </div>
 
         {/* Mobile toggle */}
@@ -86,13 +95,16 @@ const Navbar = () => {
                   {link.label}
                 </Link>
               ))}
-              <Link
-                to="/get-started"
+              <MotionLink
+                to="/review-resume"
                 onClick={() => setIsOpen(false)}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
                 className="mt-2 rounded-full bg-red-600 px-5 py-2.5 text-center text-sm font-semibold text-white shadow-sm shadow-red-200 transition-colors duration-200 hover:bg-red-700"
               >
-                Get Started
-              </Link>
+                Review Resume
+              </MotionLink>
             </div>
           </motion.div>
         )}

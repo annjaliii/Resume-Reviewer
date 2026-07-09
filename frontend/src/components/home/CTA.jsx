@@ -2,6 +2,12 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 
 const CTA = () => {
+  const scrollToUpload = () => {
+    document
+      .getElementById("upload-resume")
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   return (
     <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
       <motion.div
@@ -24,6 +30,7 @@ const CTA = () => {
 
           <button
             type="button"
+            onClick={scrollToUpload}
             className="group mt-8 inline-flex items-center gap-2 rounded-full bg-red-600 px-8 py-3.5 text-sm font-semibold text-white shadow-sm shadow-red-900/40 transition-all duration-200 hover:bg-red-700 hover:shadow-md hover:shadow-red-900/40 active:scale-[0.98]"
           >
             Review Resume

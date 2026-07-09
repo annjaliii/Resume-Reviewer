@@ -45,7 +45,7 @@ const UploadBox = () => {
       const dropped = e.dataTransfer.files?.[0];
       validateAndSetFile(dropped);
     },
-    [validateAndSetFile]
+    [validateAndSetFile],
   );
 
   const handleBrowseChange = (e) => {
@@ -60,12 +60,31 @@ const UploadBox = () => {
   };
 
   return (
-    <section className="mx-auto w-full max-w-2xl px-4 py-12 sm:px-6">
+    <section
+      id="upload-resume"
+      className="mx-auto w-full max-w-2xl px-4 py-20 sm:px-6 lg:py-24"
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.4 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="mx-auto max-w-xl text-center"
+      >
+        <h2 className="text-3xl font-bold tracking-tight text-black sm:text-4xl">
+          Upload Your Resume
+        </h2>
+        <p className="mt-4 text-base leading-relaxed text-gray-500 sm:text-lg">
+          Upload your PDF and receive ATS score, AI feedback and resume
+          improvement suggestions within seconds.
+        </p>
+      </motion.div>
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.3 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
+        transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
         onDragOver={(e) => {
           e.preventDefault();
           setIsDragging(true);
@@ -75,7 +94,7 @@ const UploadBox = () => {
           setIsDragging(false);
         }}
         onDrop={handleDrop}
-        className={`relative overflow-hidden rounded-2xl border-2 border-dashed bg-white p-10 text-center shadow-sm transition-all duration-300 sm:p-14 ${
+        className={`relative mt-12 overflow-hidden rounded-2xl border-2 border-dashed bg-white p-10 text-center shadow-sm transition-all duration-300 sm:p-14 ${
           isDragging
             ? "border-red-500 bg-red-50/50 shadow-lg shadow-red-100"
             : "border-gray-200 hover:border-red-300 hover:shadow-md hover:shadow-gray-100"
@@ -106,11 +125,16 @@ const UploadBox = () => {
                 transition={{ duration: 0.25, ease: "easeOut" }}
                 className="flex h-16 w-16 items-center justify-center rounded-2xl bg-red-50"
               >
-                <UploadCloud className="h-8 w-8 text-red-600" strokeWidth={1.75} />
+                <UploadCloud
+                  className="h-8 w-8 text-red-600"
+                  strokeWidth={1.75}
+                />
               </motion.div>
 
               <h3 className="mt-6 text-lg font-semibold text-black">
-                {isDragging ? "Drop your resume here" : "Drag & drop your resume"}
+                {isDragging
+                  ? "Drop your resume here"
+                  : "Drag & drop your resume"}
               </h3>
               <p className="mt-1.5 text-sm text-gray-500">
                 or choose a file from your computer
@@ -139,7 +163,10 @@ const UploadBox = () => {
               className="flex flex-col items-center"
             >
               <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-green-50">
-                <CheckCircle2 className="h-8 w-8 text-green-600" strokeWidth={1.75} />
+                <CheckCircle2
+                  className="h-8 w-8 text-green-600"
+                  strokeWidth={1.75}
+                />
               </div>
 
               <h3 className="mt-6 text-lg font-semibold text-black">
@@ -172,7 +199,7 @@ const UploadBox = () => {
                 type="button"
                 className="mt-6 inline-flex items-center gap-2 rounded-full bg-red-600 px-6 py-3 text-sm font-semibold text-white shadow-sm shadow-red-200 transition-all duration-200 hover:bg-red-700 hover:shadow-md hover:shadow-red-200 active:scale-[0.98]"
               >
-                 Review Resume
+                Analyze Resume
               </button>
             </motion.div>
           )}

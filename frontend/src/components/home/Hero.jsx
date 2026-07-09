@@ -18,6 +18,12 @@ const fadeUp = {
 };
 
 const Hero = () => {
+  const scrollToUpload = () => {
+    document
+      .getElementById("upload-resume")
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   return (
     <section className="relative overflow-hidden bg-white">
       <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-16 px-4 py-16 sm:px-6 md:py-24 lg:grid-cols-2 lg:px-8 lg:py-28">
@@ -65,6 +71,7 @@ const Hero = () => {
           >
             <button
               type="button"
+              onClick={scrollToUpload}
               className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-red-600 px-7 py-3.5 text-sm font-semibold text-white shadow-sm shadow-red-200 transition-all duration-200 hover:bg-red-700 hover:shadow-md hover:shadow-red-200 sm:w-auto"
             >
               Review Resume
