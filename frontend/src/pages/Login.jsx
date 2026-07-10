@@ -1,0 +1,260 @@
+import { useState } from "react";
+import { motion } from "framer-motion";
+import {
+  FileText,
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  ArrowRight,
+} from "lucide-react";
+
+const GoogleIcon = (props) => (
+  <svg viewBox="0 0 24 24" width="18" height="18" {...props}>
+    <path
+      fill="#4285F4"
+      d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.43 3.58v2.98h3.93c2.3-2.12 3.52-5.24 3.52-8.8z"
+    />
+    <path
+      fill="#34A853"
+      d="M12 24c3.24 0 5.95-1.07 7.93-2.91l-3.93-2.98c-1.09.73-2.5 1.16-4 1.16-3.08 0-5.68-2.08-6.61-4.87H1.34v3.06C3.31 21.3 7.34 24 12 24z"
+    />
+    <path
+      fill="#FBBC05"
+      d="M5.39 14.4c-.24-.73-.38-1.5-.38-2.4s.14-1.67.38-2.4V6.54H1.34C.49 8.23 0 10.06 0 12s.49 3.77 1.34 5.46l4.05-3.06z"
+    />
+    <path
+      fill="#EA4335"
+      d="M12 4.77c1.76 0 3.34.61 4.58 1.79l3.48-3.48C17.94 1.19 15.24 0 12 0 7.34 0 3.31 2.7 1.34 6.54l4.05 3.06C6.32 6.85 8.92 4.77 12 4.77z"
+    />
+  </svg>
+);
+
+const Login = () => {
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const [errors, setErrors] = useState({});
+
+  const handleChange = (field) => (e) => {
+    setFormData((prev) => ({ ...prev, [field]: e.target.value }));
+    setErrors((prev) => ({ ...prev, [field]: "" }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const nextErrors = {};
+
+    if (!formData.email.trim()) {
+      nextErrors.email = "Email is required.";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      nextErrors.email = "Enter a valid email address.";
+    }
+
+    if (!formData.password) {
+      nextErrors.password = "Password is required.";
+    } else if (formData.password.length < 6) {
+      nextErrors.password = "Password must be at least 6 characters.";
+    }
+
+    setErrors(nextErrors);
+    // UI only — no backend call wired up yet.
+  };
+
+  return (
+    <main className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-white px-4 py-16 sm:px-6">
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="w-full max-w-md rounded-2xl border border-gray-100 bg-white p-8 shadow-xl shadow-gray-200/60 sm:p-10"
+      >
+        {/* Logo */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.05, ease: "easeOut" }}
+          className="flex justify-center"
+        >
+          <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-red-600 shadow-sm shadow-red-200">
+            <FileText className="h-5 w-5 text-white" strokeWidth={2.25} />
+          </span>
+        </motion.div>
+
+        {/* Heading */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
+          className="mt-5 text-center"
+        >
+          <h1 className="text-2xl font-bold tracking-tight text-black">
+            Welcome Back
+          </h1>
+          <p className="mt-2 text-sm leading-relaxed text-gray-500">
+            Sign in to access your resume analysis history and AI reports.
+          </p>
+        </motion.div>
+
+        {/* Form */}
+        <motion.form
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.15, ease: "easeOut" }}
+          onSubmit={handleSubmit}
+          noValidate
+          className="mt-8 space-y-5"
+        >
+          {/* Email */}
+          <div>
+            <label
+              htmlFor="email"
+              className="mb-1.5 block text-sm font-medium text-black"
+            >
+              Email
+            </label>
+            <div className="relative">
+              <Mail className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <input
+                id="email"
+                type="email"
+                value={formData.email}
+                onChange={handleChange("email")}
+                placeholder="you@example.com"
+                className={`w-full rounded-xl border bg-white py-3 pl-10 pr-4 text-sm text-black placeholder:text-gray-400 transition-colors duration-200 focus:outline-none focus:ring-2 ${
+                  errors.email
+                    ? "border-red-400 focus:ring-red-200"
+                    : "border-gray-200 focus:border-red-400 focus:ring-red-100"
+                }`}
+              />
+            </div>
+            {errors.email && (
+              <p className="mt-1.5 text-xs font-medium text-red-600">
+                {errors.email}
+              </p>
+            )}
+          </div>
+
+          {/* Password */}
+          <div>
+            <label
+              htmlFor="password"
+              className="mb-1.5 block text-sm font-medium text-black"
+            >
+              Password
+            </label>
+            <div className="relative">
+              <Lock className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                value={formData.password}
+                onChange={handleChange("password")}
+                placeholder="••••••••"
+                className={`w-full rounded-xl border bg-white py-3 pl-10 pr-11 text-sm text-black placeholder:text-gray-400 transition-colors duration-200 focus:outline-none focus:ring-2 ${
+                  errors.password
+                    ? "border-red-400 focus:ring-red-200"
+                    : "border-gray-200 focus:border-red-400 focus:ring-red-100"
+                }`}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 transition-colors duration-200 hover:text-black"
+              >
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
+              </button>
+            </div>
+            {errors.password && (
+              <p className="mt-1.5 text-xs font-medium text-red-600">
+                {errors.password}
+              </p>
+            )}
+          </div>
+
+          {/* Remember me + Forgot password */}
+          <div className="flex items-center justify-between">
+            <label className="flex cursor-pointer items-center gap-2 text-sm text-gray-600">
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={() => setRememberMe((prev) => !prev)}
+                className="h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-2 focus:ring-red-200 focus:ring-offset-0"
+              />
+              Remember me
+            </label>
+            <a
+              href="#"
+              className="text-sm font-medium text-red-600 transition-colors duration-200 hover:text-red-700"
+            >
+              Forgot Password?
+            </a>
+          </div>
+
+          {/* Submit */}
+          <motion.button
+            type="submit"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="group flex w-full items-center justify-center gap-2 rounded-full bg-red-600 py-3.5 text-sm font-semibold text-white shadow-sm shadow-red-200 transition-all duration-200 hover:bg-red-700 hover:shadow-md hover:shadow-red-200"
+          >
+            Login
+            <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+          </motion.button>
+        </motion.form>
+
+        {/* Divider */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.2, ease: "easeOut" }}
+          className="mt-7 flex items-center gap-3"
+        >
+          <span className="h-px flex-1 bg-gray-200" />
+          <span className="text-xs font-medium uppercase tracking-wide text-gray-400">
+            Or
+          </span>
+          <span className="h-px flex-1 bg-gray-200" />
+        </motion.div>
+
+        {/* Google button */}
+        <motion.button
+          type="button"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
+          className="mt-5 flex w-full items-center justify-center gap-3 rounded-full border border-gray-200 bg-white py-3.5 text-sm font-semibold text-black transition-all duration-200 hover:border-gray-300 hover:bg-gray-50"
+        >
+          <GoogleIcon />
+          Continue with Google
+        </motion.button>
+
+        {/* Bottom text */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.25, ease: "easeOut" }}
+          className="mt-7 text-center text-sm text-gray-500"
+        >
+          Don&apos;t have an account?{" "}
+          <a
+            href="#"
+            className="font-semibold text-red-600 transition-colors duration-200 hover:text-red-700"
+          >
+            Sign Up
+          </a>
+        </motion.p>
+      </motion.div>
+    </main>
+  );
+};
+
+export default Login;
