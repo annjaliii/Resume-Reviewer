@@ -1,13 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import {
-  FileText,
-  Mail,
-  Lock,
-  Eye,
-  EyeOff,
-  ArrowRight,
-} from "lucide-react";
+import { FileText, User, Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
 
 const GoogleIcon = (props) => (
   <svg viewBox="0 0 24 24" width="18" height="18" {...props}>
@@ -30,10 +23,15 @@ const GoogleIcon = (props) => (
   </svg>
 );
 
-const Login = () => {
-  const [formData, setFormData] = useState({ email: "", password: "" });
+const Register = () => {
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState({});
 
   const handleChange = (field) => (e) => {
@@ -45,6 +43,10 @@ const Login = () => {
     e.preventDefault();
     const nextErrors = {};
 
+    if (!formData.fullName.trim()) {
+      nextErrors.fullName = "Full name is required.";
+    }
+
     if (!formData.email.trim()) {
       nextErrors.email = "Email is required.";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
@@ -55,6 +57,12 @@ const Login = () => {
       nextErrors.password = "Password is required.";
     } else if (formData.password.length < 6) {
       nextErrors.password = "Password must be at least 6 characters.";
+    }
+
+    if (!formData.confirmPassword) {
+      nextErrors.confirmPassword = "Please confirm your password.";
+    } else if (formData.confirmPassword !== formData.password) {
+      nextErrors.confirmPassword = "Passwords do not match.";
     }
 
     setErrors(nextErrors);
@@ -89,10 +97,11 @@ const Login = () => {
           className="mt-4 text-center"
         >
           <h1 className="text-xl font-bold tracking-tight text-black">
-            Welcome Back
+            Create Your Account
           </h1>
           <p className="mt-1.5 text-sm leading-relaxed text-gray-500">
-            Sign in to access your resume analysis history and AI reports.
+            Join AI Resume Reviewer and start improving your resume with
+            AI-powered analysis.
           </p>
         </motion.div>
 
@@ -105,6 +114,36 @@ const Login = () => {
           noValidate
           className="mt-6 space-y-4"
         >
+          {/* Full Name */}
+          <div>
+            <label
+              htmlFor="fullName"
+              className="mb-1 block text-sm font-medium text-black"
+            >
+              Full Name
+            </label>
+            <div className="relative">
+              <User className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <input
+                id="fullName"
+                type="text"
+                value={formData.fullName}
+                onChange={handleChange("fullName")}
+                placeholder="Jane Doe"
+                className={`w-full rounded-xl border bg-white py-2.5 pl-10 pr-4 text-sm text-black placeholder:text-gray-400 transition-colors duration-200 focus:outline-none focus:ring-2 ${
+                  errors.fullName
+                    ? "border-red-400 focus:ring-red-200"
+                    : "border-gray-200 focus:border-red-400 focus:ring-red-100"
+                }`}
+              />
+            </div>
+            {errors.fullName && (
+              <p className="mt-1 text-xs font-medium text-red-600">
+                {errors.fullName}
+              </p>
+            )}
+          </div>
+
           {/* Email */}
           <div>
             <label
@@ -177,23 +216,48 @@ const Login = () => {
             )}
           </div>
 
-          {/* Remember me + Forgot password */}
-          <div className="flex items-center justify-between pt-0.5">
-            <label className="flex cursor-pointer items-center gap-2 text-sm text-gray-600">
-              <input
-                type="checkbox"
-                checked={rememberMe}
-                onChange={() => setRememberMe((prev) => !prev)}
-                className="h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-2 focus:ring-red-200 focus:ring-offset-0"
-              />
-              Remember me
-            </label>
-            <a
-              href="#"
-              className="text-sm font-medium text-red-600 transition-colors duration-200 hover:text-red-700"
+          {/* Confirm Password */}
+          <div>
+            <label
+              htmlFor="confirmPassword"
+              className="mb-1 block text-sm font-medium text-black"
             >
-              Forgot Password?
-            </a>
+              Confirm Password
+            </label>
+            <div className="relative">
+              <Lock className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <input
+                id="confirmPassword"
+                type={showConfirmPassword ? "text" : "password"}
+                value={formData.confirmPassword}
+                onChange={handleChange("confirmPassword")}
+                placeholder="••••••••"
+                className={`w-full rounded-xl border bg-white py-2.5 pl-10 pr-11 text-sm text-black placeholder:text-gray-400 transition-colors duration-200 focus:outline-none focus:ring-2 ${
+                  errors.confirmPassword
+                    ? "border-red-400 focus:ring-red-200"
+                    : "border-gray-200 focus:border-red-400 focus:ring-red-100"
+                }`}
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword((prev) => !prev)}
+                aria-label={
+                  showConfirmPassword ? "Hide password" : "Show password"
+                }
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 transition-colors duration-200 hover:text-black"
+              >
+                {showConfirmPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
+              </button>
+            </div>
+            {errors.confirmPassword && (
+              <p className="mt-1 text-xs font-medium text-red-600">
+                {errors.confirmPassword}
+              </p>
+            )}
           </div>
 
           {/* Submit */}
@@ -204,7 +268,7 @@ const Login = () => {
             transition={{ duration: 0.2, ease: "easeOut" }}
             className="group flex w-full items-center justify-center gap-2 rounded-full bg-red-600 py-3 text-sm font-semibold text-white shadow-sm shadow-red-200 transition-all duration-200 hover:bg-red-700 hover:shadow-md hover:shadow-red-200"
           >
-            Login
+            Create Account
             <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
           </motion.button>
         </motion.form>
@@ -244,12 +308,12 @@ const Login = () => {
           transition={{ duration: 0.4, delay: 0.25, ease: "easeOut" }}
           className="mt-5 text-center text-sm text-gray-500"
         >
-          Don&apos;t have an account?{" "}
+          Already have an account?{" "}
           <a
             href="#"
             className="font-semibold text-red-600 transition-colors duration-200 hover:text-red-700"
           >
-            Sign Up
+            Login
           </a>
         </motion.p>
       </motion.div>
@@ -257,4 +321,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;
