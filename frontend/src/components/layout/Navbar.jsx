@@ -1,9 +1,7 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { FileText, Menu, X } from "lucide-react";
-
-const MotionLink = motion(Link);
 
 const NAV_LINKS = [
   { label: "Home", to: "/" },
@@ -12,6 +10,27 @@ const NAV_LINKS = [
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const scrollToUpload = () => {
+    if (location.pathname !== "/") {
+      navigate("/");
+
+      setTimeout(() => {
+        document
+          .getElementById("upload-resume")
+          ?.scrollIntoView({ behavior: "smooth" });
+      }, 200);
+    } else {
+      document
+        .getElementById("upload-resume")
+        ?.scrollIntoView({ behavior: "smooth" });
+    }
+
+    setIsOpen(false);
+  };
 
   return (
     <motion.header
@@ -30,12 +49,13 @@ const Navbar = () => {
           <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-red-600 shadow-sm shadow-red-200">
             <FileText className="h-5 w-5 text-white" strokeWidth={2.25} />
           </span>
+
           <span className="text-lg font-semibold tracking-tight text-black">
             AI Resume Reviewer
           </span>
         </Link>
 
-        {/* Desktop links */}
+        {/* Desktop Links */}
         <div className="hidden items-center gap-10 md:flex">
           {NAV_LINKS.map((link) => (
             <Link
@@ -44,6 +64,7 @@ const Navbar = () => {
               className="group relative py-1 text-sm font-medium text-gray-700 transition-colors duration-200 hover:text-red-600"
             >
               {link.label}
+
               <span className="absolute inset-x-0 -bottom-0.5 h-0.5 origin-left scale-x-0 rounded-full bg-red-600 transition-transform duration-300 ease-out group-hover:scale-x-100" />
             </Link>
           ))}
@@ -51,60 +72,59 @@ const Navbar = () => {
 
         {/* Desktop CTA */}
         <div className="hidden md:block">
-          <MotionLink
-            to="/review-resume"
+          <motion.button
+            onClick={scrollToUpload}
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.97 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-            className="inline-block rounded-full bg-red-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-red-200 transition-shadow duration-200 hover:bg-red-700 hover:shadow-md hover:shadow-red-200"
+            transition={{ duration: 0.2 }}
+            className="rounded-full bg-red-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-red-200 transition-all duration-200 hover:bg-red-700 hover:shadow-md"
           >
             Review Resume
-          </MotionLink>
+          </motion.button>
         </div>
 
-        {/* Mobile toggle */}
+        {/* Mobile Toggle */}
         <button
           type="button"
           onClick={() => setIsOpen((prev) => !prev)}
           className="inline-flex items-center justify-center rounded-lg p-2 text-black transition-colors duration-200 hover:bg-gray-100 md:hidden"
-          aria-label="Toggle navigation menu"
-          aria-expanded={isOpen}
+          aria-label="Toggle navigation"
         >
           {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
       </nav>
 
-      {/* Mobile menu */}
+      {/* Mobile Menu */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: "easeInOut" }}
+            transition={{ duration: 0.25 }}
             className="overflow-hidden border-t border-gray-100 bg-white md:hidden"
           >
-            <div className="flex flex-col gap-1 px-4 py-4 sm:px-6">
+            <div className="flex flex-col gap-2 px-4 py-4">
               {NAV_LINKS.map((link) => (
                 <Link
                   key={link.to}
                   to={link.to}
                   onClick={() => setIsOpen(false)}
-                  className="rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 transition-colors duration-200 hover:bg-gray-50 hover:text-red-600"
+                  className="rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 hover:text-red-600"
                 >
                   {link.label}
                 </Link>
               ))}
-              <MotionLink
-                to="/review-resume"
-                onClick={() => setIsOpen(false)}
+
+              <motion.button
+                onClick={scrollToUpload}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.97 }}
-                transition={{ duration: 0.2, ease: "easeOut" }}
-                className="mt-2 rounded-full bg-red-600 px-5 py-2.5 text-center text-sm font-semibold text-white shadow-sm shadow-red-200 transition-colors duration-200 hover:bg-red-700"
+                transition={{ duration: 0.2 }}
+                className="mt-2 rounded-full bg-red-600 px-5 py-2.5 text-sm font-semibold text-white"
               >
                 Review Resume
-              </MotionLink>
+              </motion.button>
             </div>
           </motion.div>
         )}
