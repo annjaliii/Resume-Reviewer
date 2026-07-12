@@ -2,7 +2,10 @@ from fastapi import APIRouter, UploadFile, File
 import os
 import shutil
 
-from services.resume_service import extract_text_from_pdf
+from services.resume_service import (
+    extract_text_from_pdf,
+    analyze_resume,
+)
 
 router = APIRouter()
 
@@ -21,9 +24,12 @@ async def upload_resume(file: UploadFile = File(...)):
     # Extract text
     extracted_text = extract_text_from_pdf(file_path)
 
+    # Analyze resume
+    analysis = analyze_resume(extracted_text)
+
     return {
         "filename": file.filename,
         "content_type": file.content_type,
-        "message": "Resume uploaded successfully!",
-        "text": extracted_text
+        "message": "Resume analyzed successfully!",
+        "analysis": analysis,
     }
