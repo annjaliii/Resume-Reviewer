@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   UploadCloud,
@@ -7,6 +8,7 @@ import {
   CheckCircle2,
   AlertCircle,
 } from "lucide-react";
+import { uploadResume } from "../../api/resumeApi";
 
 const MAX_SIZE_MB = 5;
 const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
@@ -15,9 +17,12 @@ const formatSize = (bytes) => `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 
 const UploadBox = () => {
   const inputRef = useRef(null);
+  const navigate = useNavigate();
+
   const [isDragging, setIsDragging] = useState(false);
   const [file, setFile] = useState(null);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const validateAndSetFile = useCallback((selected) => {
     if (!selected) return;
@@ -59,6 +64,28 @@ const UploadBox = () => {
     if (inputRef.current) inputRef.current.value = "";
   };
 
+  const handleAnalyze = async () => {
+    if (!file) return;
+
+    try {
+      setLoading(true);
+
+      const result = await uploadResume(file);
+
+      navigate("/results", {
+        state: {
+          analysis: result.analysis,
+          filename: result.filename,
+        },
+      });
+    } catch (err) {
+      console.error(err);
+      alert("Failed to analyze resume.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <section
       id="upload-resume"
@@ -68,12 +95,13 @@ const UploadBox = () => {
         initial={{ opacity: 0, y: 16 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.4 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
+        transition={{ duration: 0.5 }}
         className="mx-auto max-w-xl text-center"
       >
         <h2 className="text-3xl font-bold tracking-tight text-black sm:text-4xl">
           Upload Your Resume
         </h2>
+
         <p className="mt-4 text-base leading-relaxed text-gray-500 sm:text-lg">
           Upload your PDF and receive ATS score, AI feedback and resume
           improvement suggestions within seconds.
@@ -84,7 +112,7 @@ const UploadBox = () => {
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.3 }}
-        transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
+        transition={{ duration: 0.6, delay: 0.1 }}
         onDragOver={(e) => {
           e.preventDefault();
           setIsDragging(true);
@@ -115,20 +143,15 @@ const UploadBox = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
               className="flex flex-col items-center"
             >
               <motion.div
                 animate={
                   isDragging ? { y: -6, scale: 1.05 } : { y: 0, scale: 1 }
                 }
-                transition={{ duration: 0.25, ease: "easeOut" }}
                 className="flex h-16 w-16 items-center justify-center rounded-2xl bg-red-50"
               >
-                <UploadCloud
-                  className="h-8 w-8 text-red-600"
-                  strokeWidth={1.75}
-                />
+                <UploadCloud className="h-8 w-8 text-red-600" />
               </motion.div>
 
               <h3 className="mt-6 text-lg font-semibold text-black">
@@ -136,6 +159,7 @@ const UploadBox = () => {
                   ? "Drop your resume here"
                   : "Drag & drop your resume"}
               </h3>
+
               <p className="mt-1.5 text-sm text-gray-500">
                 or choose a file from your computer
               </p>
@@ -143,7 +167,7 @@ const UploadBox = () => {
               <button
                 type="button"
                 onClick={() => inputRef.current?.click()}
-                className="group mt-6 inline-flex items-center gap-2 rounded-full bg-red-600 px-6 py-3 text-sm font-semibold text-white shadow-sm shadow-red-200 transition-all duration-200 hover:bg-red-700 hover:shadow-md hover:shadow-red-200 active:scale-[0.98]"
+                className="group mt-6 inline-flex items-center gap-2 rounded-full bg-red-600 px-6 py-3 text-sm font-semibold text-white hover:bg-red-700"
               >
                 <FileText className="h-4 w-4" />
                 Browse PDF
@@ -156,67 +180,58 @@ const UploadBox = () => {
           ) : (
             <motion.div
               key="selected"
-              initial={{ opacity: 0, scale: 0.96 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.96 }}
-              transition={{ duration: 0.25, ease: "easeOut" }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               className="flex flex-col items-center"
             >
               <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-green-50">
-                <CheckCircle2
-                  className="h-8 w-8 text-green-600"
-                  strokeWidth={1.75}
-                />
+                <CheckCircle2 className="h-8 w-8 text-green-600" />
               </div>
 
               <h3 className="mt-6 text-lg font-semibold text-black">
-                Resume ready
+                Resume Ready
               </h3>
 
-              <div className="mt-4 flex w-full max-w-sm items-center justify-between gap-3 rounded-xl border border-gray-100 bg-gray-50 px-4 py-3">
-                <div className="flex min-w-0 items-center gap-3">
-                  <FileText className="h-5 w-5 shrink-0 text-red-600" />
-                  <div className="min-w-0 text-left">
-                    <p className="truncate text-sm font-medium text-black">
-                      {file.name}
-                    </p>
+              <div className="mt-4 flex w-full max-w-sm items-center justify-between rounded-xl border border-gray-100 bg-gray-50 px-4 py-3">
+                <div className="flex items-center gap-3">
+                  <FileText className="h-5 w-5 text-red-600" />
+
+                  <div>
+                    <p className="text-sm font-medium">{file.name}</p>
                     <p className="text-xs text-gray-500">
                       {formatSize(file.size)}
                     </p>
                   </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={handleRemove}
-                  aria-label="Remove file"
-                  className="shrink-0 rounded-full p-1.5 text-gray-400 transition-colors duration-200 hover:bg-gray-200 hover:text-black"
-                >
+
+                <button onClick={handleRemove}>
                   <X className="h-4 w-4" />
                 </button>
               </div>
 
               <button
                 type="button"
-                className="mt-6 inline-flex items-center gap-2 rounded-full bg-red-600 px-6 py-3 text-sm font-semibold text-white shadow-sm shadow-red-200 transition-all duration-200 hover:bg-red-700 hover:shadow-md hover:shadow-red-200 active:scale-[0.98]"
+                onClick={handleAnalyze}
+                disabled={loading}
+                className="mt-6 rounded-full bg-red-600 px-6 py-3 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-60"
               >
-                Analyze Resume
+                {loading ? "Analyzing..." : "Analyze Resume"}
               </button>
             </motion.div>
           )}
         </AnimatePresence>
       </motion.div>
 
-      {/* Error message */}
       <AnimatePresence>
         {error && (
           <motion.div
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.2 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-600"
           >
-            <AlertCircle className="h-4 w-4 shrink-0" />
+            <AlertCircle className="h-4 w-4" />
             {error}
           </motion.div>
         )}
