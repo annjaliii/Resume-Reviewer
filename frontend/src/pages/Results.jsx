@@ -11,6 +11,7 @@ import {
   RotateCcw,
   FileText,
 } from "lucide-react";
+import { generatePDFReport } from "../utils/pdfReport";
 
 const TOTAL_SKILLS = 10;
 const RADIUS = 70;
@@ -315,6 +316,7 @@ const Results = () => {
         >
           <motion.button
             type="button"
+            onClick={() => generatePDFReport(analysis, filename)}
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
