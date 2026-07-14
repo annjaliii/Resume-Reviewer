@@ -9,6 +9,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { uploadResume } from "../../api/resumeApi";
+import LoadingScreen from "../common/LoadingScreen";
 
 const MAX_SIZE_MB = 5;
 const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
@@ -72,6 +73,8 @@ const UploadBox = () => {
 
       const result = await uploadResume(file);
 
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
       navigate("/results", {
         state: {
           analysis: result.analysis,
@@ -85,7 +88,9 @@ const UploadBox = () => {
       setLoading(false);
     }
   };
-
+  if (loading) {
+    return <LoadingScreen />;
+  }
   return (
     <section
       id="upload-resume"
