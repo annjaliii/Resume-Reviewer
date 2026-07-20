@@ -7,6 +7,9 @@ from services.resume_service import (
     analyze_resume,
 )
 
+from services.gemini_service import get_ai_resume_feedback
+
+
 router = APIRouter()
 
 UPLOAD_FOLDER = "uploads"
@@ -21,11 +24,19 @@ async def upload_resume(file: UploadFile = File(...)):
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
-    # Extract text
+    # Extract text from PDF
     extracted_text = extract_text_from_pdf(file_path)
 
-    # Analyze resume
+    # Rule-based ATS analysis
     analysis = analyze_resume(extracted_text)
+
+    # Get personalized AI suggestions from Gemini
+    ai_suggestions = get_ai_resume_feedback(extracted_text)
+
+    # Use Gemini suggestions if available
+    # Otherwise keep rule-based suggestions as fallback
+    if ai_suggestions:
+        analysis["suggestions"] = ai_suggestions
 
     return {
         "filename": file.filename,
